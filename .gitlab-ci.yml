@@ -1,0 +1,3 @@
+include:
+- project: 'okmeter/okmeter-common-ci'
+  file: '/helm-charts-ci.yml'
