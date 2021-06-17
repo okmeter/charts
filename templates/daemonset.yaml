@@ -1,0 +1,54 @@
+---
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: {{ .Chart.Name }}
+  labels:
+    app: {{ .Chart.Name }}
+spec:
+  selector:
+    matchLabels:
+      app: {{ .Chart.Name }}
+  template:
+    metadata:
+      labels:
+        app: {{ .Chart.Name }}
+    spec:
+      serviceAccountName: {{ .Chart.Name }} 
+      hostNetwork: true
+      tolerations: {{ toYaml .Values.tolerations | nindent 6 }}
+      containers:
+      - name: okagent
+        image: okmeter/okagent:latest
+        securityContext:
+          privileged: true
+        env:
+          - name: OKMETER_API_TOKEN
+            value: {{ required "Okmeter API-token is required" .Values.apiToken }} 
+          - name: OKMETER_STATSD_HOST
+            valueFrom:
+              fieldRef:
+                fieldPath: status.hostIP
+          - name: K8S_NODE_NAME
+            valueFrom:
+              fieldRef:
+                fieldPath: spec.nodeName
+        resources: {{ toYaml .Values.resources | nindent 10 }}
+        volumeMounts:
+        - name: dockersocket
+          mountPath: /var/run/docker.sock
+          readOnly: true
+        - name: hostproc
+          mountPath: /host/proc
+          readOnly: true
+        - name: okagentdir
+          mountPath: /usr/local/okagent
+      volumes:
+      - name: dockersocket
+        hostPath:
+          path: /var/run/docker.sock
+      - name: hostproc
+        hostPath:
+          path: /proc
+      - name: okagentdir
+        emptyDir: {}
