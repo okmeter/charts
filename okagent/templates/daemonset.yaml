@@ -41,8 +41,13 @@ spec:
         - name: hostproc
           mountPath: /host/proc
           readOnly: true
-        - name: okagentdir
+        - name: okagent-dir
           mountPath: /usr/local/okagent
+{{- if .Values.config }}
+        - name: okagent-config
+          mountPath: /usr/local/okagent/etc
+          readOnly: true
+{{- end }}
       volumes:
       - name: dockersocket
         hostPath:
@@ -50,5 +55,14 @@ spec:
       - name: hostproc
         hostPath:
           path: /proc
-      - name: okagentdir
+      - name: okagent-dir
         emptyDir: {}
+{{- if .Values.config }}
+      - name: okagent-config
+        configMap:
+          name: {{ .Chart.Name }}
+          defaultMode: 420
+          items:
+          - key: config.yaml
+            path: config.yaml
+{{- end }}

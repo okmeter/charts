@@ -1,5 +1,8 @@
 apiToken: "zzz"
 
+config:
+  # Your custom YAML config here
+
 resources:
   requests:
     memory: 100Mi
