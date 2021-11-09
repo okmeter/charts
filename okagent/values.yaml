@@ -1,5 +1,7 @@
 apiToken: ""
 
+image: registry.okmeter.io/agent/okagent:latest
+
 config:
   # Your custom YAML config here
 
@@ -9,7 +11,6 @@ resources:
     cpu: 100m
   limits:
     memory: 2Gi
-    cpu: 1
 
 tolerations:
 - operator: Exists
