@@ -1,0 +1,13 @@
+apiVersion: v1
+entries:
+  okagent:
+  - apiVersion: v2
+    created: "2021-11-09T21:14:46.027130795+03:00"
+    description: Okmeter agent for Kubernetes
+    digest: 5b78dba9266851c7c2e2ae4c0629655f5cbb8f20aaa093e89b7f7fdf8b632c5c
+    name: okagent
+    type: application
+    urls:
+    - https://okmeter.github.io/charts/okagent-0.2.0.tgz
+    version: 0.2.0
+generated: "2021-11-09T21:14:46.026673176+03:00"
