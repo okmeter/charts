@@ -1,0 +1,32 @@
+apiToken: ""
+image: registry.okmeter.io/agent/okagent:latest
+
+resources:
+  requests:
+    memory: 100Mi
+    cpu: 100m
+  limits:
+    memory: 2Gi
+
+tolerations:
+- operator: Exists
+
+agentConfig:
+  source_hostname: my-rds-monitoring-host
+
+# We recommend use PVC for okagent to prevent metrics loss. By default emptyDir is used
+persistentVolume:
+  enable: false 
+  storageClass: ""
+  size: 1Gi
+
+# One or several remote database configs. Please refer to https://okmeter.io/example/misc/docs#rds-config
+rdsConfigs:
+  remote_postgres.yaml:
+    plugin: postgresql # or mysql
+#    source_hostname: "some uniq name" # this name will be displayd on host page in okmeter. Name must be uniq
+#    config:
+#      host: x.x.x.x # database IP addres
+#      user: okagent # user for connect to database
+#      password: yyy # passwort for connect to database
+#      port: 5432 # port if use not standart port 

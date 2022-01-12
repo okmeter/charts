@@ -1,0 +1,5 @@
+apiVersion: v2
+name: okagent-rds
+description: Okmeter agent for RDS monitoring
+type: application
+version: 0.1.0
