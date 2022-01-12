@@ -1,0 +1,77 @@
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: {{ .Chart.Name }}
+  labels:
+    app: {{ .Chart.Name }}
+spec:
+  selector:
+    matchLabels:
+      app: {{ .Chart.Name }}
+  replicas: 1
+  serviceName: {{ .Chart.Name }}
+{{- if .Values.persistentVolume.enable }}
+  volumeClaimTemplates:
+  - metadata:
+      name: okagent-dir
+    spec:
+{{- if .Values.persistentVolume.storageClass }}
+{{- if (eq "-" .Values.persistentVolume.storageClass) }}
+      storageClassName: ""
+{{- else }}
+      storageClassName: {{ .Values.persistentVolume.storageClass | quote }}
+{{- end }}
+{{- end }}
+      accessModes:
+      - ReadWriteOnce
+      resources:
+        requests:
+          storage: {{ .Values.persistentVolume.size | quote | default "1Gi" }}
+{{- end }}
+  template:
+    metadata:
+      labels:
+        app: {{ .Chart.Name }}
+    spec:
+      tolerations: {{ toYaml .Values.tolerations | nindent 6 }}
+      containers:
+      - name: okagent
+        image: {{ .Values.image }}
+        env:
+        - name: OKMETER_API_TOKEN
+          value: {{ required "Okmeter API-token is required" .Values.apiToken | quote }}
+        resources: {{ toYaml .Values.resources | nindent 10 }}
+        volumeMounts:
+        - name: okagent-dir
+          mountPath: /usr/local/okagent
+{{- if .Values.agentConfig }}
+        - name: okagent-config
+          mountPath: /usr/local/okagent/etc
+          readOnly: true
+{{- end }}
+{{- if .Values.rdsConfigs }}
+        - name: okagent-config-rds
+          mountPath: /usr/local/okagent/etc/config.d
+          readOnly: true
+{{- end }}
+      volumes:
+{{- if ne .Values.persistentVolume.enable true }}
+      - name: okagent-dir
+        emptyDir: {}
+{{- end }}
+{{- if .Values.agentConfig }}
+      - name: okagent-config
+        configMap:
+          name: {{ .Chart.Name }}
+          defaultMode: 420
+          items:
+          - key: config.yaml
+            path: config.yaml
+{{- end }}
+{{- if .Values.rdsConfigs }}
+      - name: okagent-config-rds
+        secret:
+          secretName: {{ .Chart.Name }}
+          defaultMode: 420
+{{- end }}

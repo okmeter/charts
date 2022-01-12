@@ -1,0 +1,10 @@
+{{- if .Values.agentConfig }}
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ .Chart.Name }}
+data:
+  config.yaml: |
+    {{- toYaml .Values.agentConfig | nindent 4 }}
+{{- end }}
