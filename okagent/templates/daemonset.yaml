@@ -1,3 +1,4 @@
+{{- if ne .Values.rds.enable true }}
 ---
 apiVersion: apps/v1
 kind: DaemonSet
@@ -67,4 +68,5 @@ spec:
           items:
           - key: config.yaml
             path: config.yaml
+{{- end }}
 {{- end }}

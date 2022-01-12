@@ -1,0 +1,12 @@
+{{- if eq .Values.rds.enable true }}
+{{- if .Values.rds.config }}
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: rds-{{ .Chart.Name }}
+data:
+  config.yaml: |
+    {{- toYaml .Values.rds.config | nindent 4 }}
+{{- end }}
+{{- end }}

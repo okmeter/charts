@@ -1,0 +1,69 @@
+{{- if eq .Values.rds.enable true }}
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: rds-{{ .Chart.Name }}
+  labels:
+    app: rds-{{ .Chart.Name }}
+spec:
+  selector:
+    matchLabels:
+      app: rds-{{ .Chart.Name }}
+  replicas: 1
+  serviceName: rds-{{ .Chart.Name }}
+{{- if .Values.rds.persistentVolume.enable }}
+  volumeClaimTemplates:
+  - metadata:
+      name: okagent-dir
+    spec:
+{{- if .Values.rds.persistentVolume.storageClass }}
+{{- if (eq "-" .Values.rds.persistentVolume.storageClass) }}
+        storageClassName: ""
+{{- else }}
+        storageClassName: {{ .Values.rds.persistentVolume.storageClass | quote }}
+{{- end }}
+{{- end }}
+        accessModes:
+          - ReadWriteOnce
+        resources:
+          requests:
+            storage: {{ .Values.rds.persistentVolume.size | quote | default "1Gi" }}
+{{- end }}
+  template:
+    metadata:
+      labels:
+        app: rds-{{ .Chart.Name }}
+    spec:
+      serviceAccountName: {{ .Chart.Name }}
+      tolerations: {{ toYaml .Values.tolerations | nindent 6 }}
+      containers:
+      - name: okagent
+        image: {{ .Values.image }}
+        env:
+          - name: OKMETER_API_TOKEN
+            value: {{ required "Okmeter API-token is required" .Values.apiToken }}
+        resources: {{ toYaml .Values.resources | nindent 10 }}
+        volumeMounts:
+        - name: okagent-dir
+          mountPath: /usr/local/okagent
+{{- if .Values.rds.config }}
+        - name: okagent-config
+          mountPath: /usr/local/okagent/etc
+          readOnly: true
+{{- end }}
+      volumes:
+{{- if ne .Values.rds.persistentVolume.enable true }}
+      - name: okagent-dir
+        emptyDir: {}
+{{- end }}
+{{- if .Values.rds.config }}
+      - name: okagent-config
+        configMap:
+          name: rds-{{ .Chart.Name }}
+          defaultMode: 420
+          items:
+          - key: config.yaml
+            path: config.yaml
+{{- end }}
+{{- end }}
