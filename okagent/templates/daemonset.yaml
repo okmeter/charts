@@ -16,6 +16,7 @@ spec:
     spec:
       serviceAccountName: {{ .Chart.Name }} 
       hostNetwork: true
+      dnsPolicy: {{ .Values.dnsPolicy | default "ClusterFirstWithHostNet" }}
       tolerations: {{ toYaml .Values.tolerations | nindent 6 }}
       containers:
       - name: okagent

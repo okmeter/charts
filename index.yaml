@@ -2,7 +2,16 @@ apiVersion: v1
 entries:
   okagent:
   - apiVersion: v2
-    created: "2022-01-12T20:13:58.459434908+03:00"
+    created: "2022-10-03T12:11:55.44880845+03:00"
+    description: Okmeter agent for Kubernetes
+    digest: 65ba609924cfc7d32c1b6fac12ebb8472434f7e62b56e67da798066804bbc8c3
+    name: okagent
+    type: application
+    urls:
+    - https://okmeter.github.io/charts/okagent-0.2.1.tgz
+    version: 0.2.1
+  - apiVersion: v2
+    created: "2022-10-03T12:11:55.448326527+03:00"
     description: Okmeter agent for Kubernetes
     digest: 76aa395f487b0a9995761fc482867b67d1629823c75dea2e440ca4a92e575f8c
     name: okagent
@@ -12,7 +21,7 @@ entries:
     version: 0.2.0
   okagent-rds:
   - apiVersion: v2
-    created: "2022-01-12T20:13:58.459812634+03:00"
+    created: "2022-10-03T12:11:55.449379155+03:00"
     description: Okmeter agent for RDS monitoring
     digest: 3fdfe8b296801e4fc59b69a6ea86879540f7df7a5e0501286b909ddd09682a29
     name: okagent-rds
@@ -20,4 +29,4 @@ entries:
     urls:
     - https://okmeter.github.io/charts/okagent-rds-0.1.0.tgz
     version: 0.1.0
-generated: "2022-01-12T20:13:58.458835386+03:00"
+generated: "2022-10-03T12:11:55.44712121+03:00"
